@@ -74,7 +74,7 @@ class Plp extends React.Component{
             return attrubteArray.map((m)=>{
                 if(m.type === 'swatch'){
                     return(
-                    <div key={m.name} style={{order:1}}>
+                    <div className="plp__cnt__flex__swatch" key={m.name}>
                     {m.items.map((e)=>(
                         <div onClick={()=>{this.props.selectAttr(e.value,id,m.name)}} className={`miniCheckoutCnt__item_attr_color ${this.checkAttr(id,m.name,e.value)}`} key={e.value} style={{backgroundColor:`${e.value}`}}></div>))}
                     </div>
@@ -83,7 +83,7 @@ class Plp extends React.Component{
                 }
                 else{
                     return(
-                    <div key={m.name} style={{order:2,marginBottom:'5px'}}>
+                    <div className="plp__cnt__flex__text" key={m.name} >
                         {m.items.map((e)=>(
                         <div className={`pdp__details__attr__text ${this.checkAttr(id,m.name,e.value)}`} key={e.value} onClick={()=>{this.props.selectAttr(e.value,id,m.name)}}>{e.value}</div>))}
                     </div>
@@ -113,9 +113,9 @@ class Plp extends React.Component{
                         <div className="plp__attr">{this.renderAttrubtes(m.attributes,m.id)}</div>
                     </div>
                     <div className="plp__quantityCnt">
-                        <div onClick={()=>{this.props.sumUp(m)}}><img style={{display:'block',cursor:'pointer'}} src="/big-plus.png" alt="plus" /></div>
+                        <div onClick={()=>{this.props.sumUp(m)}}><img className="plp__quantityCnt__img" src="/big-plus.png" alt="plus" /></div>
                         <div className="plp__count">{m.coun}</div>
-                        <div onClick={()=>{this.props.onSubstruct(m)}}><img style={{display:'block',cursor:'pointer'}} src="/big-minus.png" alt="minus" /></div>
+                        <div onClick={()=>{this.props.onSubstruct(m)}}><img className="plp__quantityCnt__img" src="/big-minus.png" alt="minus" /></div>
                     </div>
 
                     <div className="plp__cnt__gallery">

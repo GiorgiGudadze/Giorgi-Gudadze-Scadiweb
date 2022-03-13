@@ -1,7 +1,8 @@
 import React from "react";
 import ProductsBag from "./ProductsBag";
-import fetchData from "../Api/Api";
-import {NavLink,Link} from 'react-router-dom'
+import {currencyGetter,getCategoriesAPI} from "../Api/Api";
+import {NavLink} from 'react-router-dom'
+import {withRouter} from 'react-router-dom'
 class Header extends React.Component{
     constructor(props){
         super(props)
@@ -10,45 +11,49 @@ class Header extends React.Component{
         this.myRef = React.createRef();
     }
 
-    componentDidUpdate(prevProps){
-
-        if(this.props.addedProductsArray.length > 0){
-            if(prevProps.addedProductsArray.length === 0 ){
-                this.setState({showBag:false})
-            }
-        }
+    UNSAFE_componentWillUpdate(){
 
         let onOutsideCurrenyClick=(e)=>{
+            
             if (this.myRef.current && !this.myRef.current.contains(e.target) && !e.target.closest('.checkoutNav__currencyCnt')) {
                 this.setState({showCurrency:false})
               }
+
         }
+
         document.addEventListener('click', onOutsideCurrenyClick, true);
         return () => {
           document.removeEventListener('click', onOutsideCurrenyClick, true);
         };
-
+        
     }
+
     equals = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+
     componentDidMount(){
-
       let getCurrency = async ()=>{
-        let query = `query{
-            currencies{
-              label
-              symbol
-            }
-            }`
-      let currencyData = await fetchData(query)
 
+      let currencyData = await currencyGetter()
+      
       let currencyArray = currencyData.data.data.currencies
+    
+      let allCategories = await getCategoriesAPI()
+      let ctg = allCategories.data.data.categories
 
       this.setState({currencyArray})
-
+      
     }
     getCurrency()
 
+
     }
+
+    UNSAFE_componentWillReceiveProps(nextProps) {
+        if (nextProps.location.pathname !== this.props.location.pathname) {
+          this.setState({ showBag: false })
+        }
+    }
+
     countTotal=()=>{
         let total = 0
         let uniqueArray = new Set(this.props.addedProductsArray)
@@ -74,7 +79,14 @@ class Header extends React.Component{
         if (nextProps.currentCurrency !== this.props.currentCurrency) {
           this.countTotal()
         }
-        
+
+        if(this.state.showBag === true){
+            if(this.props.addedProductsArray.length === 0){
+                this.setState({showBag:false})
+            }
+        }
+
+
       }
 
     miniCheckout(){
@@ -83,7 +95,7 @@ class Header extends React.Component{
         
 
         return(
-            <ProductsBag total={this.countTotal()} attrList={this.props.attrList} selectAttr={this.props.selectAttr} currentCurrency={this.props.currentCurrency} onSubstruct={this.props.onSubstruct} sumUp={this.props.sumUp} selectedProducts={this.props.addedProductsArray} />
+            <ProductsBag currencyArray={this.state.currencyArray} total={this.countTotal()} attrList={this.props.attrList} selectAttr={this.props.selectAttr} currentCurrency={this.props.currentCurrency} onSubstruct={this.props.onSubstruct} sumUp={this.props.sumUp} selectedProducts={this.props.addedProductsArray} />
         )
     }
 
@@ -129,7 +141,6 @@ class Header extends React.Component{
     
     render(){
         let uniqueArray = new Set(this.props.addedProductsArray)
-
          
         return(
             <>
@@ -137,9 +148,12 @@ class Header extends React.Component{
             <header>
                 <div className="category">
                     <ul className="category__ul">
-                        <li><NavLink exact activeClassName="active" to='/'>All Products</NavLink><div className="category__line"></div></li>
-                        <li><NavLink activeClassName="active" to='/tech'>Tech</NavLink><div className="category__line"></div></li>
-                        <li><NavLink activeClassName="active" to='/clothes'>Clothes</NavLink><div className="category__line"></div></li>
+                        {this.props.ctgArray.map((m)=>{
+                        return(
+                            <li key={m.name}><NavLink exact activeClassName="active" to={m.name === 'all' ? '/' : `/${m.name}`}>{m.name}</NavLink><div className="category__line"></div></li>
+                        )
+                        })}
+
                     </ul>
                 </div>
                 <div className="pdpLogo">
@@ -155,7 +169,7 @@ class Header extends React.Component{
                         {this.state.showCurrency === true ? this.displayCurrency() : ''}
                         <div className="checkoutNav__flex_cartCnt">
                             {uniqueArray.size > 0 ? <div onClick={()=>{this.setState({showBag:!this.state.showBag}) }}>{uniqueArray.size}</div> : ''}
-                            <img src="/cartIcon.png" alt="cart" style={{cursor:'pointer',display:'block'}} onClick={()=>{this.setState({showBag:!this.state.showBag}) }} />
+                            <img src="/cartIcon.png" className="checkoutNav__flex_cartCnt_img" alt="cart" onClick={()=>{this.setState({showBag:!this.state.showBag}) }} />
                         </div>
                     </div>
 
@@ -171,4 +185,4 @@ class Header extends React.Component{
     }
 }
 
-export default Header;
+export default withRouter(Header);

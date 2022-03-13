@@ -1,15 +1,15 @@
 import React from "react";
 import Header from "./components/Header";
 import Home from "./components/Home";
-import fetchData from "./Api/Api";
-import {BrowserRouter,Route,Link} from 'react-router-dom'
+import {fetchAll,getCategoriesAPI} from './Api/Api'
+import {BrowserRouter,Route} from 'react-router-dom'
 import Pdp from "./components/Pdp";
 import Plp from "./components/Plp";
 class App extends React.Component{
 
   constructor(props){
     super(props)
-    this.state = {selectedProducts:[],checker:'',productsArray:[],currentCurrency:'USD',selectedAttr:[]}
+    this.state = {selectedProducts:[],checker:'',productsArray:[],currentCurrency:'USD',selectedAttr:[],ctgArray:[]}
   }
 
   selectCurrency = (label)=>{
@@ -17,41 +17,19 @@ class App extends React.Component{
   }
 
   componentDidMount(){
-    
     let getData = async ()=>{
-      let query = `query{
-        category{
-          products{
-            id
-            name
-            category
-            description
-            gallery
-            prices{
-              currency{
-                label
-                symbol
-              }
-              amount
-            }
-            inStock
-            attributes{
-              name
-              type
-              items{
-                displayValue
-                value
-              }
-            }
-          }
-        }
-      }`
-      let productData = await fetchData(query)
+
+      let productData = await fetchAll()
 
       let newArray = productData.data.data.category.products.map(m=>{
         return {...m,coun:0}
       })
+
+      let allCategories = await getCategoriesAPI()
+      let ctg = allCategories.data.data.categories
+
       this.setState({productsArray:newArray})
+      this.setState({ctgArray:ctg})
 
     }
     getData()
@@ -144,19 +122,18 @@ class App extends React.Component{
         <>
         <BrowserRouter>
 
-        <Header selectAttr={this.selectAttr} currentCurrency={this.state.currentCurrency} selectedCurrency={this.selectCurrency} onSubstruct={this.onSubstruct} sumUp={this.sumUp}  addedProductsArray={this.state.selectedProducts} attrList = {this.state.selectedAttr}/>
+        <Header ctgArray={this.state.ctgArray} selectAttr={this.selectAttr} currentCurrency={this.state.currentCurrency} selectedCurrency={this.selectCurrency} onSubstruct={this.onSubstruct} sumUp={this.sumUp}  addedProductsArray={this.state.selectedProducts} attrList = {this.state.selectedAttr}/>
 
-        <Route exact path="/" >
-        <Home selectAttr={this.selectAttr} attrList = {this.state.selectedAttr} ctgName={'All Products'} currentCurrency={this.state.currentCurrency} productsArray={this.state.productsArray} addCart={this.checkoutBag} />
-        </Route>
-
-        <Route path="/tech" >
-        <Home selectAttr={this.selectAttr} attrList = {this.state.selectedAttr} ctgName={'Tech'} currentCurrency={this.state.currentCurrency} productsArray={this.state.productsArray.filter(f=>(f.category === 'tech'))} addCart={this.checkoutBag} />
-        </Route>
-
-        <Route path="/clothes" >
-        <Home selectAttr={this.selectAttr} attrList = {this.state.selectedAttr} ctgName={'Clothes'} currentCurrency={this.state.currentCurrency} productsArray={this.state.productsArray.filter(f=>(f.category === 'clothes'))} addCart={this.checkoutBag} />
-        </Route>
+        {this.state.ctgArray.map(m=>{
+          return(
+            <Route key={m.name} exact path={m.name === 'all' ? '/' : `/${m.name}`}>
+                
+                <Home selectAttr={this.selectAttr} attrList = {this.state.selectedAttr} ctgName={m.name} currentCurrency={this.state.currentCurrency} productsArray={
+                  m.name === 'all' ? this.state.productsArray : this.state.productsArray.filter(f=>(f.category === m.name))}
+                   addCart={this.checkoutBag} />
+            </Route>
+          )
+        })}
 
         <Route exact path="/pdp/:id" render={({ match }) => (
           <Pdp selectAttr={this.selectAttr} attrList = {this.state.selectedAttr} addCart={this.checkoutBag} currentCurrency={this.state.currentCurrency} data={this.state.productsArray.filter(f=>(f.id === match.params.id))} />

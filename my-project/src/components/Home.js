@@ -9,9 +9,7 @@ class Home extends React.Component{
 
   }
 
-
   render(){
-    
     return(
         
       <div className="productsCnt">
@@ -23,7 +21,6 @@ class Home extends React.Component{
       </div>
     )
   }
-
 }
 
 export default Home;

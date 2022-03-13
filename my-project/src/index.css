@@ -54,6 +54,14 @@ body{
   order: 4;
   cursor: pointer;
 }
+.pdp__errorCnt{
+  margin-top: 5px;
+  order: 4;
+}
+.pdp__errorCnt__msg{
+  color: red;
+  font-weight: bold;
+}
 .miniBuyBtn2{
   width: 140px;
   height: 43px;
@@ -65,6 +73,13 @@ body{
   cursor: pointer;
   border: 1px solid #1D1F22;
   font-weight: bold;
+}
+.productBagFlex{
+  display: flex;
+  justify-content: space-between;
+}
+.productBagFlex__a{
+  text-decoration: none;
 }
 .attrContainer{
   width: 100%;
@@ -81,9 +96,28 @@ body{
   flex-direction: column;
   align-items: center;
 }
+.attrContainer__render__swatch{
+  order: 1;
+  text-align: center;
+}
+.attrContainer__render__swatch__firstChild{
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 3px;
+}
+.attrContainer__render__text{
+  order: 2;
+  text-align: center;
+}
+.attrContainer__render__text__firstChild{
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 3px;
+}
 .currentCtg{
   font-size: 42px;
   margin: 80px 15px;
+  text-transform: capitalize;
 }
 .productsCnt{
   max-width: 1238px;
@@ -138,6 +172,7 @@ body{
   width: 100%;
   position: absolute;
   top: 0;
+  object-fit: cover;
 }
 .product__name{
   color: var(--black);
@@ -207,6 +242,7 @@ header{
   text-decoration: none;
   color: var(--black);
   transition: .3s;
+  text-transform: capitalize;
 }
 .category__ul li a.active{
   color: #5ECE7B;
@@ -253,7 +289,7 @@ header{
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  z-index: 2;
+  z-index: 1;
   left: 10px;
   cursor: pointer;
 }
@@ -261,7 +297,7 @@ header{
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  z-index: 2;
+  z-index: 1;
   right: 10px;
   cursor: pointer;
 }
@@ -308,6 +344,13 @@ header{
   flex-direction: column;
   width: 100%;
 }
+.plp__cnt__flex__swatch{
+  order: 1;
+}
+.plp__cnt__flex__text{
+  order: 2;
+  margin-bottom: 5px;
+}
 .plp__cnt__gallery{
   position: relative;
   display: flex;
@@ -331,12 +374,14 @@ header{
   justify-content: space-between;
   margin-right: 12px;
 }
+.plp__quantityCnt__img{
+  display: block;
+  cursor: pointer;
+}
 .pdp{
   display: flex;
   max-width: 1238px;
-  margin: auto;
-  margin-top: 80px;
-
+  margin: 80px auto;
 }
 .pdp__side{
   display: flex;
@@ -355,7 +400,6 @@ header{
   width: 100%;
 }
 .pdp__main img{
-  height:511px;
   width:100%;
 }
 .pdp__details{
@@ -373,6 +417,30 @@ header{
 .pdp__details__attr{
   display: flex;
   flex-direction: column;
+}
+.pdp__details__attr__swatch{
+  order: 2;
+}
+.pdp__details__attr__swatch__p{
+  font-weight: bold;
+  font-size: 18px;
+  margin-bottom: 8px;
+  order: 1px;
+}
+.pdp__details__priceCnt__firstChild{
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 40px;
+}
+.pdp__details__attr__cnt{
+  order: 3;
+  margin: 5px 0;
+}
+.pdp__details__attr__cnt__p{
+  font-weight: bold;
+  font-size: 18px;
+  margin-bottom: 8px;
+  order: 1;
 }
 .pdp__details__attr__text{
   border: 1px solid #1D1F22;
@@ -417,6 +485,11 @@ header{
   color: #fff;
   cursor: pointer;
 }
+.pdp__details__error{
+  color: red;
+  margin-top: 5px;
+  font-weight: bold;
+}
 .pdp__details__purchase.not{
   opacity: 0.5;
   cursor: auto;
@@ -427,6 +500,11 @@ header{
   font-family: 'Source Sans Pro';
   line-break: anywhere;
   margin-top: 40px;
+}
+.pdp__details__desc body{
+  overflow: unset;
+  min-height: unset;
+
 }
 .checkoutNav{
   width: 100%;
@@ -441,6 +519,10 @@ header{
 }
 .checkoutNav__flex_cartCnt{
   position: relative;
+}
+.checkoutNav__flex_cartCnt_img{
+  cursor: pointer;
+  display: block;
 }
 .checkoutNav__flex_cartCnt div{
     font-family: 'Source Sans Pro';
@@ -498,6 +580,13 @@ header{
   background-color: #ffffff;
   z-index: 3;
 }
+.miniCheckoutCnt__firstChild{
+  font-size: 16px;
+  margin-bottom: 23px;
+}
+.miniCheckoutCnt__span{
+  font-weight: bold;
+}
 .miniCheckoutCnt__item{
   display: flex;
   justify-content: space-between;
@@ -512,12 +601,21 @@ header{
   min-width: 136px;
   justify-content: space-between;
 }
-
+.miniCheckoutCnt__item_flex1__render__swatch{
+  order: 1;
+}
+.miniCheckoutCnt__item_flex1__render__text{
+  order: 2;
+}
 .miniCheckoutCnt__item_quantityCnt{
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   margin-right: 18px;
+}
+.miniCheckoutCnt__item_quantityCnt__img{
+  display: block;
+  cursor: pointer;
 }
 .miniCheckoutCnt__item_attr{
   display: flex;
@@ -527,8 +625,8 @@ header{
   margin-bottom: 3px;
 }
 .miniCheckoutCnt__item_attr_color{
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   border: 1px solid #1D1F22;
   display: inline-block;
   margin-right: 3px;
@@ -590,7 +688,11 @@ header{
   width: 100%;
   background-position: center;
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: contain;
+}
+.swatchPdp{
+  width: 34px;
+  height: 34px;
 }
 .backgroundCover{
   width: 100px;
@@ -655,7 +757,7 @@ header{
     margin: 0;
     position: relative;
     width: 100%;
-    padding-top: 85%;
+    padding-top: 91%;
   }
   .pdp__side{
     flex-direction: row;

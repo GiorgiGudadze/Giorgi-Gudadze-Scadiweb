@@ -50,8 +50,8 @@ class ProductList extends React.Component{
           {attrubteArray.map((m)=>{
               if(m.type === 'swatch'){
                   return(
-                  <div key={m.name} style={{order:1,textAlign:'center'}}>
-                  <div style={{fontWeight:'bold',textAlign:'center',marginBottom:'3px'}}>
+                  <div className="attrContainer__render__swatch" key={m.name} >
+                  <div className="attrContainer__render__swatch__firstChild">
                   {m.name}
                   </div>
                   {m.items.map((e)=>(
@@ -62,8 +62,8 @@ class ProductList extends React.Component{
               }
               else{
                   return(
-                  <div key={m.name} style={{order:2,textAlign:'center'}}>
-                      <div style={{fontWeight:'bold',textAlign:'center',marginBottom:'3px'}}>
+                  <div className="attrContainer__render__text" key={m.name}>
+                      <div className="attrContainer__render__text__firstChild">
                       {m.name}
                       </div>
                       {m.items.map((e)=>(
@@ -74,10 +74,8 @@ class ProductList extends React.Component{
           })}
           <div className="miniBuyBtn" onClick={()=>{
             this.validateAttr(product)
-            // this.props.addCart(product)
-
             }}>Add</div>
-            <div style={{marginTop:'5px',order:'4'}}>{this.state.option ? '' : <div style={{color:'red',fontWeight:'bold'}}>Select all options</div>}</div>
+            <div className="pdp__errorCnt">{this.state.option ? '' : <div className="pdp__errorCnt__msg">Select all options</div>}</div>
           </>
           )
       }
@@ -86,16 +84,7 @@ class ProductList extends React.Component{
       }
   }
 
-
-
-  // popUp(attr,id){
-
-    
-    
-  // }
-
     render(){
-      console.log(this.props);
         return(
           <>
             {this.props.list.map((m,index)=>{
