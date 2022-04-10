@@ -30,8 +30,8 @@ class ProductList extends React.Component{
       }
       
     }
-    validateAttr=(product)=>{
 
+    validateAttr=(product)=>{
       let current = this.props.attrList.filter(f=>f.id===product.id)
       if(current.length === product.attributes.length){
         this.props.addCart(product)
@@ -42,6 +42,7 @@ class ProductList extends React.Component{
         this.setState({option:false})
       }
     }
+    
     renderAttrubtes(attrubteArray,id,product){
 
       if(attrubteArray){

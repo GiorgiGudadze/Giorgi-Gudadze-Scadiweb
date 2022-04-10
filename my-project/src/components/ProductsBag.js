@@ -16,7 +16,7 @@ class ProductsBag extends React.Component{
                     return(
                     <div key={m.name} className="miniCheckoutCnt__item_flex1__render__swatch">
                     {m.items.map((e)=>(
-                        <div onClick={()=>{this.props.selectAttr(e.value,id,m.name)}} className={`miniCheckoutCnt__item_attr_color ${this.checkAttr(id,m.name,e.value)}`} key={e.value} style={{backgroundColor:`${e.value}`}}></div>))}
+                        <div className={`miniCheckoutCnt__item_attr_color ${this.checkAttr(id,m.name,e.value)}`} key={e.value} style={{backgroundColor:`${e.value}`}}></div>))}
                     </div>
                     )
                     
@@ -25,7 +25,7 @@ class ProductsBag extends React.Component{
                     return(
                     <div className="miniCheckoutCnt__item_flex1__render__text" key={m.name}>
                         {m.items.map((e)=>(
-                        <div className={`miniCheckoutCnt__item_attr_text ${this.checkAttr(id,m.name,e.value)}`} key={e.value} onClick={()=>{this.props.selectAttr(e.value,id,m.name)}}>{e.value}</div>))}
+                        <div className={`miniCheckoutCnt__item_attr_text ${this.checkAttr(id,m.name,e.value)}`} key={e.value}>{e.value}</div>))}
                     </div>
                     )
                 }
@@ -50,7 +50,7 @@ class ProductsBag extends React.Component{
         return priceArray.map(m=>{
           if(m.currency.label === this.props.currentCurrency){
             return(
-                <div key={m.currency.label} className="miniCheckoutCnt__item_price">{m.currency.symbol}{(Math.round((m.amount * mult) * 100) / 100).toFixed(2)}</div>
+                <div key={m.currency.label} className="miniCheckoutCnt__item_price">{m.currency.symbol}{(Math.round((m.amount) * 100) / 100).toFixed(2)}</div>
             )
           }
         })
@@ -66,9 +66,21 @@ class ProductsBag extends React.Component{
         
         let uniqueArray = new Set(this.props.selectedProducts)
         let myProductsArray = Array.from(uniqueArray)
+        const uniqueIds = [];
+
+    myProductsArray = myProductsArray.filter(element => {
+  const isDuplicate = uniqueIds.includes(element.id);
+
+  if (!isDuplicate) {
+    uniqueIds.push(element.id);
+
+    return true;
+  }
+});
+
         return(
             <div>
-            {myProductsArray.map(m=>{
+            {myProductsArray.map((m)=>{
                 return(
                 <div key={m.id}>
                     <div className="miniCheckoutCnt__item">
@@ -79,7 +91,7 @@ class ProductsBag extends React.Component{
                             <div className="miniCheckoutCnt__item_attr">{this.renderAttrubtes(m.attributes,m.id)}</div>
                         </div>
                         <div className="miniCheckoutCnt__item_quantityCnt">
-                            <div onClick={()=>{this.props.sumUp(m)}}><img className="miniCheckoutCnt__item_quantityCnt__img" src="/plus.png" alt="plus" /></div>
+                            <div onClick={()=>{this.props.sumUp((m))}}><img className="miniCheckoutCnt__item_quantityCnt__img" src="/plus.png" alt="plus" /></div>
                             <div className="miniCheckoutCnt__item_quantityCnt_count">{m.coun}</div>
                             <div onClick={()=>{this.props.onSubstruct(m)}}><img className="miniCheckoutCnt__item_quantityCnt__img" src="/minus.png" alt="minus" /></div>
                         </div>

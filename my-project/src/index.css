@@ -653,9 +653,10 @@ header{
   margin-bottom: 3px;
 }
 .miniCheckoutCnt__item_attr_text:hover{
-  color:#1D1F22;
+  /* test123 */
+  /* color:#1D1F22;
   background-color: #fff;
-  border-color: #1D1F22;
+  border-color: #1D1F22; */
 }
 .miniCheckoutCnt__item_attr_text.active{
   color:#1D1F22;

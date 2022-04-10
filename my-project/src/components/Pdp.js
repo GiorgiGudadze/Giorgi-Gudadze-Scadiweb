@@ -1,12 +1,11 @@
 import React from "react";
-
+import {getProductById} from '../Api/Api'
 class Pdp extends React.Component{
 
     constructor(props){
         super(props)
         this.myRef = React.createRef();
-        this.data = this.props.data[0]
-        this.state = {currentPicIndex:0,option:true,description:''}
+        this.state = {currentPicIndex:0,option:true,description:'',pdpData:{}}
         this.parser = new DOMParser();
     }
 
@@ -25,9 +24,9 @@ class Pdp extends React.Component{
     }
 
     validate = ()=>{
-        let current = this.props.attrList.filter(f=>f.id===this.data.id)
-        if(this.data.inStock === true && current.length === this.data.attributes.length){
-            this.props.addCart(this.data) 
+        let current = this.props.attrList.filter(f=>f.id===this.state.pdpData.id)
+        if(this.state.pdpData.inStock === true && current.length === this.state.pdpData.attributes.length){
+            this.props.addCart(this.state.pdpData) 
             this.setState({option:true})
         }
         else{
@@ -37,10 +36,10 @@ class Pdp extends React.Component{
 
     errorChecker = () =>{
 
-        if(this.state.option && this.data.inStock === true){
+        if(this.state.option && this.state.pdpData.inStock === true){
             return ''
         }
-        else if(this.data.inStock === false){
+        else if(this.state.pdpData.inStock === false){
             return (<div className="pdp__details__error">Out of stock</div>)
         }
         else{
@@ -53,76 +52,96 @@ class Pdp extends React.Component{
         return element;
     }
 
+    fetchData = async () =>{
+        let res = await getProductById(this.props.data)
+        this.setState({pdpData:res.data.data.product})
+    }
+
     componentDidMount(){
-        this.myRef.current.append(this.parser.parseFromString(this.data.description,"text/html").body)
+        this.fetchData()
+    }
+
+    componentDidUpdate(){
+        if(Object.keys(this.state.pdpData).length > 0){
+            if(this.myRef.current.innerHTML === ""){
+                this.myRef.current.append(this.parser.parseFromString(this.state.pdpData.description,"text/html").body)
+            }
+        }
     }
 
     render(){
-        return(
-            <div className="pdp">
-                <div className="pdp__side">
-                    {this.data.gallery.map((m,index)=>(<img onClick={()=>{this.onPictureChange(index)}} key={m} src={m} alt="side img" />))}
-                </div>
-
-                <div className="pdp__main">
-                    <img src={this.data.gallery[this.state.currentPicIndex]} alt="main img" />
-                </div>
-
-                <div className="pdp__details">
-
-                    <div className="pdp__details__title">{this.data.name}</div>
-                    <div className="pdp__details__ctg">{this.data.category}</div>
-
-                    <div className="pdp__details__attr">
-
-                        {this.data.attributes.map((m,index)=>{
-                            
-                            if(m.type === 'text'){
-                                return(
-                                    <div className="pdp__details__attr__cnt" key={m.name}>
-                                    <p className="pdp__details__attr__cnt__p">{m.name}</p>
-                                        {m.items.map((e,index)=>(
-                                        <div key={e.displayValue} onClick={()=>{this.props.selectAttr(e.value,this.data.id,m.name)}} className={`pdp__details__attr__text ${this.checkAttr(this.data.id,m.name,e.value)}`}>{e.value}</div>
-                                        ))}
-                                    </div>
-                                )
+        if(Object.keys(this.state.pdpData).length > 0 ){
+            return(
+                <div className="pdp">
+                    <div className="pdp__side">
+                        {this.state.pdpData.gallery.map((m,index)=>(<img onClick={()=>{this.onPictureChange(index)}} key={m} src={m} alt="side img" />))}
+                    </div>
+    
+                    <div className="pdp__main">
+                        <img src={this.state.pdpData.gallery[this.state.currentPicIndex]} alt="main img" />
+                    </div>
+    
+                    <div className="pdp__details">
+    
+                        <div className="pdp__details__title">{this.state.pdpData.name}</div>
+                        <div className="pdp__details__ctg">{this.state.pdpData.category}</div>
+    
+                        <div className="pdp__details__attr">
+    
+                            {this.state.pdpData.attributes.map((m,index)=>{
                                 
-                            }
-                            else{
+                                if(m.type === 'text'){
+                                    return(
+                                        <div className="pdp__details__attr__cnt" key={m.name}>
+                                        <p className="pdp__details__attr__cnt__p">{m.name}</p>
+                                            {m.items.map((e,index)=>(
+                                            <div key={e.displayValue} onClick={()=>{this.props.selectAttr(e.value,this.state.pdpData.id,m.name)}} className={`pdp__details__attr__text ${this.checkAttr(this.state.pdpData.id,m.name,e.value)}`}>{e.value}</div>
+                                            ))}
+                                        </div>
+                                    )
+                                    
+                                }
+                                else{
+                                    return(
+                                        <div className="pdp__details__attr__swatch" key={m.name}>
+                                        <p className="pdp__details__attr__swatch__p">{m.name}</p>
+                                            {m.items.map((e,index)=>(
+                                            <div onClick={()=>{this.props.selectAttr(e.value,this.state.pdpData.id,m.name)}} className={`miniCheckoutCnt__item_attr_color ${this.checkAttr(this.state.pdpData.id,m.name,e.value)} swatchPdp`} key={e.displayValue} style={{backgroundColor:`${e.value}`}}></div>
+                                            ))}
+                                        </div>
+                                )}
+                            })}
+                        </div>
+                        
+                        <div className="pdp__details__priceCnt">
+                            <div className="pdp__details__priceCnt__firstChild">PRICE:</div>
+                            {this.state.pdpData.prices.map(m=>{
+                            if(m.currency.label === this.props.currentCurrency){
                                 return(
-                                    <div className="pdp__details__attr__swatch" key={m.name}>
-                                    <p className="pdp__details__attr__swatch__p">{m.name}</p>
-                                        {m.items.map((e,index)=>(
-                                        <div onClick={()=>{this.props.selectAttr(e.value,this.data.id,m.name)}} className={`miniCheckoutCnt__item_attr_color ${this.checkAttr(this.data.id,m.name,e.value)} swatchPdp`} key={e.displayValue} style={{backgroundColor:`${e.value}`}}></div>
-                                        ))}
-                                    </div>
-                            )}
-                        })}
+                                    <div key={m.currency.symbol} className="pdp__details__price">{m.currency.symbol}{m.amount}</div>
+                                )
+                              }
+    
+                            })}
+    
+    
+                        </div>
+    
+                        <div className={`pdp__details__purchase ${this.state.pdpData.inStock === false ? 'not' : '' }`} onClick={()=>{
+                            this.validate()
+                            }}>ADD TO CART</div>
+                        <div>{this.errorChecker()}</div>
+                        <div className="pdp__details__desc" ref={this.myRef}></div>
+    
                     </div>
-                    
-                    <div className="pdp__details__priceCnt">
-                        <div className="pdp__details__priceCnt__firstChild">PRICE:</div>
-                        {this.data.prices.map(m=>{
-                        if(m.currency.label === this.props.currentCurrency){
-                            return(
-                                <div key={m.currency.symbol} className="pdp__details__price">{m.currency.symbol}{m.amount}</div>
-                            )
-                          }
-
-                        })}
-
-
-                    </div>
-
-                    <div className={`pdp__details__purchase ${this.data.inStock === false ? 'not' : '' }`} onClick={()=>{
-                        this.validate()
-                        }}>ADD TO CART</div>
-                    <div>{this.errorChecker()}</div>
-                    <div className="pdp__details__desc" ref={this.myRef}></div>
-
                 </div>
-            </div>
-        )
+     
+            )
+        }
+        else{
+            return <div>Loading</div>
+        }
+
     }
 }
 

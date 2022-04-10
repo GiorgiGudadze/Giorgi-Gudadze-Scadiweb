@@ -76,7 +76,7 @@ class Plp extends React.Component{
                     return(
                     <div className="plp__cnt__flex__swatch" key={m.name}>
                     {m.items.map((e)=>(
-                        <div onClick={()=>{this.props.selectAttr(e.value,id,m.name)}} className={`miniCheckoutCnt__item_attr_color ${this.checkAttr(id,m.name,e.value)}`} key={e.value} style={{backgroundColor:`${e.value}`}}></div>))}
+                        <div className={`miniCheckoutCnt__item_attr_color ${this.checkAttr(id,m.name,e.value)}`} key={e.value} style={{backgroundColor:`${e.value}`}}></div>))}
                     </div>
                     )
                     
@@ -85,7 +85,7 @@ class Plp extends React.Component{
                     return(
                     <div className="plp__cnt__flex__text" key={m.name} >
                         {m.items.map((e)=>(
-                        <div className={`pdp__details__attr__text ${this.checkAttr(id,m.name,e.value)}`} key={e.value} onClick={()=>{this.props.selectAttr(e.value,id,m.name)}}>{e.value}</div>))}
+                        <div className={`pdp__details__attr__text ${this.checkAttr(id,m.name,e.value)}`} key={e.value}>{e.value}</div>))}
                     </div>
                     )
                 }

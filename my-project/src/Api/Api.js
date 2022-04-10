@@ -34,6 +34,41 @@ export function fetchAll(){
   })
 
 }
+
+export function getProductById(id){
+
+  return axios.post('http://localhost:4000/',{
+    headers:{'Content-Type':'application/json'},
+    query:`query{
+      product(id: "${id}"){
+        id,
+        name,
+        inStock,
+        gallery,
+        description,
+        category,
+        attributes{
+          id,
+          name,
+          type,
+          items{
+            displayValue,
+            value,
+            id
+          }
+        },
+        prices{
+          currency{
+            label,
+            symbol
+          }
+          amount
+        }
+      }
+    }`
+  })
+}
+
 export function currencyGetter(){
 
   return axios.post('http://localhost:4000/',{

@@ -37,21 +37,62 @@ class App extends React.Component{
   }
 
   checkoutBag = (product,index)=>{
+    
+    this.setState((prevState) => {
+      if(prevState.selectedProducts.length > 0){
+        let j = 0;
+          prevState.selectedProducts.map((m,index)=>{
+            if(m.id === product.id){
+              j=1;
 
-    product.coun += 1
-    this.setState(prevState => ({
-      selectedProducts: [...prevState.selectedProducts, product]
-      
-    }))
+                  product.coun = m.coun;
+              let temp_state = this.state.selectedProducts;
 
+              let temp_element = product;
+          
+              temp_element.coun = temp_element.coun+1;
+              temp_state[index] = temp_element;
+
+              return{
+                selectedProducts: [...temp_state]
+              }
+              
+            }
+          })
+          if(j === 0){
+            product.coun = 1;
+            return{
+              selectedProducts: [...prevState.selectedProducts, product]
+            }
+          }
+
+      }
+      else{
+        product.coun = 1;
+        return{
+          selectedProducts: [...prevState.selectedProducts,product]
+        }
+      }
+    });
   }
 
-  sumUp = (product) =>{
-    product.coun += 1
-    this.setState(prevState => ({
-      selectedProducts: [...prevState.selectedProducts, product]
-      
-    }))
+  sumUp = (product,index) =>{
+
+    let indx;
+    let temp_state = this.state.selectedProducts;
+    temp_state.forEach((e,index)=>{
+      if(e.id === product.id){
+        indx= index;
+      }
+    })
+
+    let temp_element = product;
+
+    temp_element.coun = temp_element.coun+1;
+
+    temp_state[indx] = temp_element;
+
+    this.setState({selectedProducts:temp_state})
   }
   onSubstruct = (product) =>{
 
@@ -136,7 +177,7 @@ class App extends React.Component{
         })}
 
         <Route exact path="/pdp/:id" render={({ match }) => (
-          <Pdp selectAttr={this.selectAttr} attrList = {this.state.selectedAttr} addCart={this.checkoutBag} currentCurrency={this.state.currentCurrency} data={this.state.productsArray.filter(f=>(f.id === match.params.id))} />
+          <Pdp selectedProducts={this.state.selectedProducts} selectAttr={this.selectAttr} attrList = {this.state.selectedAttr} addCart={this.checkoutBag} currentCurrency={this.state.currentCurrency} quant={this.state.productsArray.filter(f=>f.id === match.params.id).map(m=>m.coun)} data={match.params.id} />
           )} />
         
         <Route path="/plp" >

@@ -90,10 +90,6 @@ class Header extends React.Component{
       }
 
     miniCheckout(){
-
-
-        
-
         return(
             <ProductsBag currencyArray={this.state.currencyArray} total={this.countTotal()} attrList={this.props.attrList} selectAttr={this.props.selectAttr} currentCurrency={this.props.currentCurrency} onSubstruct={this.props.onSubstruct} sumUp={this.props.sumUp} selectedProducts={this.props.addedProductsArray} />
         )
