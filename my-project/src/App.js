@@ -1,15 +1,15 @@
 import React from "react";
 import Header from "./components/Header";
 import Home from "./components/Home";
-import {fetchAll,getCategoriesAPI} from './Api/Api'
-import {BrowserRouter,Route} from 'react-router-dom'
+import {getCategoriesAPI,getProductsByCategory} from './Api/Api'
+import {Route,withRouter} from 'react-router-dom'
 import Pdp from "./components/Pdp";
 import Plp from "./components/Plp";
 class App extends React.Component{
 
   constructor(props){
     super(props)
-    this.state = {selectedProducts:[],checker:'',productsArray:[],currentCurrency:'USD',selectedAttr:[],ctgArray:[]}
+    this.state = {selectedProducts:[],checker:'',productsArray:[],currentCurrency:'USD',selectedAttr:[],ctgArray:[],testFetch:[]}
   }
 
   selectCurrency = (label)=>{
@@ -19,9 +19,10 @@ class App extends React.Component{
   componentDidMount(){
     let getData = async ()=>{
 
-      let productData = await fetchAll()
+      let path = window.location.pathname === '/' ? 'all' : window.location.pathname.replace('/','')
+      let testFetch = await getProductsByCategory(path)
 
-      let newArray = productData.data.data.category.products.map(m=>{
+      let newArray = testFetch.data.data.category.products.map(m=>{
         return {...m,coun:0}
       })
 
@@ -31,11 +32,41 @@ class App extends React.Component{
       this.setState({productsArray:newArray})
       this.setState({ctgArray:ctg})
 
+      this.setState({testFetch:testFetch})
+
     }
     getData()
 
   }
 
+  componentDidUpdate(prevProps) {
+    if (this.props.location.pathname !== prevProps.location.pathname) {
+      let k = 0;
+      this.state.ctgArray.map(m=>{
+
+        if(m.name === window.location.pathname.replace('/','') || window.location.pathname === "/")
+        {
+          k = 1;
+        }
+        
+      })
+
+      if(k === 1)
+      {
+      const reRunFetch = async () =>{
+
+        let path = window.location.pathname === '/' ? 'all' : window.location.pathname.replace('/','')
+        let testFetch = await getProductsByCategory(path)
+        let newArray = testFetch.data.data.category.products
+
+        this.setState({testFetch:testFetch})
+        this.setState({productsArray:newArray})
+
+      }
+      reRunFetch()
+      }
+    }
+  }
   checkoutBag = (product,index)=>{
     
     this.setState((prevState) => {
@@ -161,17 +192,15 @@ class App extends React.Component{
   render(){
     return(
         <>
-        <BrowserRouter>
-
         <Header ctgArray={this.state.ctgArray} selectAttr={this.selectAttr} currentCurrency={this.state.currentCurrency} selectedCurrency={this.selectCurrency} onSubstruct={this.onSubstruct} sumUp={this.sumUp}  addedProductsArray={this.state.selectedProducts} attrList = {this.state.selectedAttr}/>
 
         {this.state.ctgArray.map(m=>{
           return(
             <Route key={m.name} exact path={m.name === 'all' ? '/' : `/${m.name}`}>
                 
-                <Home selectAttr={this.selectAttr} attrList = {this.state.selectedAttr} ctgName={m.name} currentCurrency={this.state.currentCurrency} productsArray={
-                  m.name === 'all' ? this.state.productsArray : this.state.productsArray.filter(f=>(f.category === m.name))}
-                   addCart={this.checkoutBag} />
+                <Home selectAttr={this.selectAttr} attrList = {this.state.selectedAttr} ctgName={m.name} currentCurrency={this.state.currentCurrency} productsArray={this.state.productsArray}
+                   addCart={this.checkoutBag}
+                   />
             </Route>
           )
         })}
@@ -183,8 +212,6 @@ class App extends React.Component{
         <Route path="/plp" >
           <Plp onSubstruct={this.onSubstruct} sumUp={this.sumUp} selectAttr={this.selectAttr} attrList = {this.state.selectedAttr} selectedProducts={this.state.selectedProducts} currentCurrency={this.state.currentCurrency} />
         </Route>
-
-        </BrowserRouter>
         </>
 
     )
@@ -192,4 +219,4 @@ class App extends React.Component{
 
 }
 
-export default App;
+export default withRouter(App);
